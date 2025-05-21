@@ -26,7 +26,8 @@ if (!board_id) {
     // Si no hay board_id, redirige silenciosamente a auth.html
     window.location.href = 'auth.html';
     // No mostrar alert ni error
-    throw new Error('No board_id in URL, redirecting to auth.html');
+    return;
+
 }
 // Poner el nombre de la pizarra en el título
 const boardTitle = document.getElementById('board-title');
