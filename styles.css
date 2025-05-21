@@ -1,0 +1,682 @@
+body {
+    font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+    background: #181c23;
+    color: #e5e7ef;
+    margin: 0;
+    padding: 0;
+    letter-spacing: 0.01em;
+}
+
+.container {
+    max-width: 440px;
+    margin: 38px auto 0 auto;
+    background: #232733;
+    border-radius: 18px;
+    box-shadow: 0 2px 16px 0 rgba(0,0,0,0.20);
+    padding: 36px 22px 30px 22px;
+    min-height: 70vh;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.auth-container {
+    max-width: 350px;
+    margin: 60px auto;
+    background: #232733;
+    border-radius: 13px;
+    box-shadow: 0 2px 16px 0 rgba(0,0,0,0.18);
+    padding: 32px 24px 24px 24px;
+    color: #e5e7ef;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.auth-container form {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.auth-container label {
+    width: 100%;
+    text-align: center;
+    margin-bottom: 3px;
+}
+.auth-container input {
+    width: 90%;
+    margin-bottom: 16px;
+    border-radius: 7px;
+    border: 1px solid #292c33;
+    background: #181c23;
+    color: #e5e7ef;
+    padding: 9px 10px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: left;
+}
+.auth-container button, .auth-container .alt {
+    width: 90%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+h1 {
+    text-align: center;
+    color: #e5e7ef;
+    font-size: 2.1rem;
+    font-weight: 600;
+    margin-bottom: 0.7em;
+    letter-spacing: 0.01em;
+}
+
+.tabs {
+    display: flex;
+    gap: 2px;
+    margin-bottom: 18px;
+    justify-content: center;
+    border-bottom: 1px solid #232733;
+}
+.tab-btn {
+    background: none;
+    border: none;
+    outline: none;
+    padding: 10px 22px;
+    border-radius: 10px 10px 0 0;
+    cursor: pointer;
+    color: #a2a8be;
+    font-size: 1.08rem;
+    font-weight: 500;
+    transition: background 0.2s, color 0.2s;
+    box-shadow: none;
+}
+.tab-btn[aria-selected="true"], .tab-btn.active {
+    background: #292c33;
+    color: #7e8594;
+    font-weight: 600;
+    box-shadow: 0 2px 8px 0 rgba(40,40,40,0.08);
+}
+.tab-content {
+    display: block;
+}
+
+.calendar-bar {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    align-items: center;
+    width: 100%;
+    box-sizing: border-box;
+    min-height: 48px;
+}
+.calendar-day {
+    padding: 10px 0;
+    min-width: 48px;
+    flex: 1 1 44px;
+    border-radius: 7px;
+    background: none;
+    color: #a2a8be;
+    font-weight: 500;
+    font-size: 1.08rem;
+    cursor: pointer;
+    border: none;
+    outline: none;
+    transition: background 0.18s, color 0.18s;
+    box-shadow: none;
+    text-align: center;
+    letter-spacing: 0.01em;
+    margin-bottom: 0;
+    margin-top: 0;
+    margin-left: 0;
+    margin-right: 0;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.calendar-day.selected {
+    background: #44484f;
+    color: #fff;
+    font-weight: bold;
+    box-shadow: 0 2px 8px 0 rgba(40,40,40,0.14);
+}
+.calendar-day.today {
+    background: #bfa14a;
+    color: #232733;
+    font-weight: bold;
+    box-shadow: 0 2px 8px 0 rgba(191,161,74,0.12);
+}
+.calendar-day.selected {
+    font-weight: bold;
+    box-shadow: 0 2px 8px 0 rgba(45,139,255,0.14);
+}
+
+#wod-view {
+    background: #232e4a;
+    border: 1px solid #232733;
+    border-radius: 10px;
+    padding: 16px 15px;
+    min-height: 54px;
+    margin-bottom: 17px;
+    font-size: 1.12rem;
+    white-space: pre-line;
+    color: #e5e7ef;
+    box-shadow: 0 1px 4px 0 rgba(0,0,0,0.10);
+}
+
+#wod-text {
+    width: 100%;
+    min-height: 80px;
+    font-size: 1.08rem;
+    padding: 12px 10px;
+    border-radius: 10px;
+    border: 1px solid #232733;
+    margin-bottom: 10px;
+    resize: vertical;
+    box-sizing: border-box;
+    background: #232e4a;
+    color: #e5e7ef;
+    transition: border 0.2s;
+}
+#wod-text:focus {
+    border: 1.5px solid #4eaaff;
+    outline: none;
+}
+#save-wod {
+    background: #44484f;
+    color: #fff;
+    border: none;
+    padding: 9px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1.08rem;
+    font-weight: 500;
+    transition: background 0.18s;
+    margin-top: 2px;
+    box-shadow: 0 1px 4px 0 rgba(40,40,40,0.10);
+}
+#save-wod:hover {
+    background: #292c33;
+    color: #fff;
+}
+#results-section h2, #coach-tab-content h2, #results-tab-content h2 {
+    margin-bottom: 10px;
+    font-size: 1.13rem;
+    font-weight: 600;
+    color: #e5e7ef;
+}
+#result-form {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+}
+#athlete-name, #athlete-result {
+    flex: 1 1 120px;
+    padding: 8px 12px;
+    border-radius: 8px;
+    border: 1px solid #232733;
+    font-size: 1.05rem;
+    background: #232e4a;
+    color: #e5e7ef;
+    transition: border 0.2s;
+}
+#athlete-name:focus, #athlete-result:focus {
+    border: 1.5px solid #4eaaff;
+    outline: none;
+}
+#result-form button {
+    background: #44484f;
+    color: #fff;
+    border: none;
+    padding: 8px 18px;
+    border-radius: 8px;
+    font-size: 1.05rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.18s;
+    box-shadow: 0 1px 4px 0 rgba(40,40,40,0.10);
+}
+#result-form button:hover {
+    background: #292c33;
+    color: #fff;
+}
+#results-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+#results-list li {
+    background: #232e4a;
+    border-radius: 8px;
+    margin-bottom: 8px;
+    padding: 10px 14px;
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    font-size: 1.08rem;
+    color: #e5e7ef;
+    box-shadow: 0 1px 4px 0 rgba(0,0,0,0.10);
+}
+#results-list li span.name {
+    font-weight: 600;
+    color: #bfa14a;
+}
+@media (max-width: 600px) {
+    .container {
+        padding: 10px 2px 18px 2px;
+    }
+    #wod-text {
+        font-size: 1rem;
+    }
+}
+
+
+.container {
+    max-width: 440px;
+    margin: 38px auto 0 auto;
+    background: #fff;
+    border-radius: 18px;
+    box-shadow: 0 2px 16px 0 rgba(40,70,130,0.07);
+    padding: 36px 22px 30px 22px;
+    min-height: 70vh;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+h1 {
+    text-align: center;
+    color: #222;
+    font-size: 2.1rem;
+    font-weight: 600;
+    margin-bottom: 0.7em;
+    letter-spacing: 0.01em;
+}
+
+.tabs {
+    display: flex;
+    gap: 2px;
+    margin-bottom: 18px;
+    justify-content: center;
+    border-bottom: 1px solid #e9e9f0;
+}
+.tab-btn {
+    background: none;
+    border: none;
+    outline: none;
+    padding: 10px 22px;
+    border-radius: 10px 10px 0 0;
+    cursor: pointer;
+    color: #888;
+    font-size: 1.08rem;
+    font-weight: 500;
+    transition: background 0.2s, color 0.2s;
+    box-shadow: none;
+}
+.tab-btn[aria-selected="true"], .tab-btn.active {
+    background: #f3f7ff;
+    color: #2d3238;
+    font-weight: 600;
+    box-shadow: 0 2px 8px 0 rgba(45,139,255,0.05);
+}
+.tab-content {
+    display: block;
+}
+
+.calendar-bar {
+    display: flex;
+    gap: 6px;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+.calendar-day {
+    padding: 7px 0;
+    width: 38px;
+    border-radius: 6px;
+    background: none;
+    color: #bbb;
+    font-weight: 500;
+    font-size: 1rem;
+    cursor: pointer;
+    border: none;
+    outline: none;
+    transition: background 0.18s, color 0.18s;
+    box-shadow: none;
+}
+.calendar-day.selected,
+.calendar-day.today {
+    background: #151515;
+    color: #fff;
+}
+.calendar-day.selected {
+    font-weight: bold;
+    box-shadow: 0 2px 8px 0 rgba(45,139,255,0.08);
+}
+
+#wod-view {
+    background: #f7fafd;
+    border: 1px solid #f1f2f6;
+    border-radius: 10px;
+    padding: 16px 15px;
+    min-height: 54px;
+    margin-bottom: 17px;
+    font-size: 1.12rem;
+    white-space: pre-line;
+    color: #222;
+    box-shadow: 0 1px 4px 0 rgba(40,70,130,0.04);
+}
+
+#wod-text {
+    width: 100%;
+    min-height: 80px;
+    font-size: 1.08rem;
+    padding: 12px 10px;
+    border-radius: 10px;
+    border: 1px solid #e2e6ef;
+    margin-bottom: 10px;
+    resize: vertical;
+    box-sizing: border-box;
+    background: #f7fafd;
+    color: #222;
+    transition: border 0.2s;
+}
+#wod-text:focus {
+    border: 1.5px solid #2266bb;
+    outline: none;
+}
+#save-wod {
+    background: #2266bb;
+    color: #fff;
+    border: none;
+    padding: 9px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1.08rem;
+    font-weight: 500;
+    transition: background 0.18s;
+    margin-top: 2px;
+    box-shadow: 0 1px 4px 0 rgba(34,102,187,0.04);
+}
+#save-wod:hover {
+    background: #185099;
+}
+#results-section h2, #coach-tab-content h2, #results-tab-content h2 {
+    margin-bottom: 10px;
+    font-size: 1.13rem;
+    font-weight: 600;
+    color: #222;
+}
+#result-form {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+}
+#athlete-name, #athlete-result {
+    flex: 1 1 120px;
+    padding: 8px 12px;
+    border-radius: 8px;
+    border: 1px solid #e2e6ef;
+    font-size: 1.05rem;
+    background: #f7fafd;
+    color: #222;
+    transition: border 0.2s;
+}
+#athlete-name:focus, #athlete-result:focus {
+    border: 1.5px solid #2266bb;
+    outline: none;
+}
+#result-form button {
+    background: #2266bb;
+    color: #fff;
+    border: none;
+    padding: 8px 18px;
+    border-radius: 8px;
+    font-size: 1.05rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.18s;
+    box-shadow: 0 1px 4px 0 rgba(34,102,187,0.04);
+}
+#result-form button:hover {
+    background: #185099;
+}
+#results-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+#results-list li {
+    background: #f7fafd;
+    border-radius: 8px;
+    margin-bottom: 8px;
+    padding: 10px 14px;
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    font-size: 1.08rem;
+    color: #222;
+    box-shadow: 0 1px 4px 0 rgba(40,70,130,0.04);
+}
+#results-list li span.name {
+    font-weight: 600;
+    color: #2266bb;
+}
+@media (max-width: 600px) {
+    .container {
+        padding: 10px 2px 18px 2px;
+    }
+    #wod-text {
+        font-size: 1rem;
+    }
+}
+
+.calendar-bar {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    align-items: center;
+    width: 100%;
+    box-sizing: border-box;
+    min-height: 48px;
+}
+.calendar-day {
+    padding: 10px 0;
+    min-width: 48px;
+    flex: 1 1 44px;
+    border-radius: 7px;
+    background: #232733;
+    color: #a2a8be;
+    font-weight: 500;
+    font-size: 1.08rem;
+    cursor: pointer;
+    border: none;
+    outline: none;
+    transition: background 0.18s, color 0.18s;
+    box-shadow: none;
+    text-align: center;
+    letter-spacing: 0.01em;
+    margin-bottom: 0;
+    margin-top: 0;
+    margin-left: 0;
+    margin-right: 0;
+    white-space: nowrap;
+    overflow: hidden;
+}
+.calendar-day:hover {
+    background: #292c33;
+    color: #fff;
+}
+.calendar-day.selected {
+    background: #44484f;
+    color: #fff;
+    font-weight: bold;
+    box-shadow: 0 2px 8px 0 rgba(40,40,40,0.14);
+}
+.calendar-day.today {
+    background: #bfa14a;
+    color: #232733;
+    font-weight: bold;
+    box-shadow: 0 2px 8px 0 rgba(191,161,74,0.12);
+}
+
+
+.tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 18px;
+    justify-content: center;
+}
+.tab-btn {
+    background: #e0e6ef;
+    border: none;
+    outline: none;
+    padding: 8px 18px;
+    border-radius: 6px 6px 0 0;
+    cursor: pointer;
+    color: #222;
+    font-size: 1rem;
+    transition: background 0.2s, color 0.2s;
+}
+.tab-btn[aria-selected="true"], .tab-btn.active {
+    background: #292c33;
+    color: #7e8594;
+    font-weight: 600;
+    box-shadow: 0 2px 8px 0 rgba(40,40,40,0.08);
+}
+.tab-content {
+    display: block;
+}
+#wod-view {
+    background: #f8fafd;
+    border: 1px solid #bcd;
+    border-radius: 7px;
+    padding: 12px;
+    min-height: 56px;
+    margin-bottom: 18px;
+    font-size: 1.1rem;
+    white-space: pre-line;
+}
+
+.container {
+    max-width: 480px;
+    margin: 32px auto;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    padding: 24px 18px 32px 18px;
+}
+h1 {
+    text-align: center;
+    color: #333;
+    font-size: 2rem;
+    margin-bottom: 18px;
+}
+#wod-section {
+    margin-bottom: 32px;
+}
+#wod-text {
+    width: 100%;
+    min-height: 80px;
+    font-size: 1.1rem;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #bbb;
+    margin-bottom: 10px;
+    resize: vertical;
+    box-sizing: border-box;
+}
+#save-wod {
+    background: #2d8bff;
+    color: #fff;
+    border: none;
+    padding: 8px 18px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background 0.2s;
+}
+#save-wod:hover {
+    background: #1a6ed8;
+}
+#results-section h2 {
+    margin-bottom: 10px;
+}
+#result-form {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+}
+#athlete-name, #athlete-result {
+    flex: 1 1 120px;
+    padding: 7px 10px;
+    border-radius: 5px;
+    border: 1px solid #bbb;
+    font-size: 1rem;
+}
+#result-form button {
+    background: #2ecc40;
+    color: #fff;
+    border: none;
+    padding: 7px 14px;
+    border-radius: 5px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+#result-form button:hover {
+    background: #27ae36;
+}
+.back-to-boards.main-btn {
+    background: #bfa14a;
+    color: #232733;
+    border: none;
+    border-radius: 6px;
+    font-size: 1rem;
+    padding: 10px 24px;
+    margin-bottom: 18px;
+    margin-top: 10px;
+    margin-right: 0;
+    cursor: pointer;
+    box-shadow: 0 2px 8px 0 rgba(191,161,74,0.12);
+    transition: background 0.18s, color 0.18s;
+    display: inline-block;
+    font-weight: 600;
+}
+.back-to-boards.main-btn:hover {
+    background: #a68e3e;
+    color: #232733;
+}
+#results-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+#results-list li {
+    background: #f2faff;
+    border-radius: 6px;
+    margin-bottom: 8px;
+    padding: 7px 12px;
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    font-size: 1rem;
+}
+#results-list li span.name {
+    font-weight: bold;
+    color: #2d8bff;
+}
+@media (max-width: 600px) {
+    .container {
+        padding: 10px 2px 18px 2px;
+    }
+    #wod-text {
+        font-size: 1rem;
+    }
+}

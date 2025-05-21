@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Unirse a una Pizarra - Pizarra Virtual</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container" id="join-container">
+    <h2>Unirse a una Pizarra</h2>
+    <div id="join-message">Procesando invitación...</div>
+    <button id="go-index" style="display:none; margin-top:20px;">Ir a mi pizarra</button>
+  </div>
+  <script>
+    // Obtiene el código de la URL
+    function getInviteCode() {
+      const params = new URLSearchParams(window.location.search);
+      return params.get('code');
+    }
+    async function processJoin() {
+      const code = getInviteCode();
+      if (!code) {
+        document.getElementById('join-message').textContent = 'Invitación no válida.';
+        return;
+      }
+      // Comprobar sesión
+      const session = await fetch('session.php').then(r => r.json());
+      if (!session.logged_in) {
+        // Redirigir a login con el código
+        window.location.href = 'auth.html?invite_code=' + encodeURIComponent(code);
+        return;
+      }
+      // Si está logueado, procesar la invitación
+      const res = await fetch('join.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: 'code=' + encodeURIComponent(code)
+      });
+      const data = await res.json();
+      const msg = document.getElementById('join-message');
+      if (data.success) {
+        msg.innerHTML = '¡Te has unido correctamente a la pizarra <b>' + data.board_name + '</b>!';
+        // Solo mostrar un botón: Ir a mis pizarras
+        let btnBoards = document.createElement('button');
+        btnBoards.textContent = 'Ir a mis pizarras';
+        btnBoards.className = 'main-btn';
+        btnBoards.style.marginTop = '20px';
+        btnBoards.onclick = function() {
+          window.location.href = 'boards.html';
+        };
+        document.getElementById('join-message').after(btnBoards);
+        // Cambia el color del mensaje y del botón para mejor contraste
+        msg.style.color = '#181c23';
+        msg.style.background = '#fffbe6';
+        msg.style.borderRadius = '8px';
+        msg.style.padding = '14px 10px';
+        msg.style.marginBottom = '14px';
+        // Oculta el botón anterior si existe
+        document.getElementById('go-index').style.display = 'none';
+      } else {
+        msg.textContent = data.error || 'No se pudo procesar la invitación.';
+      }
+    }
+    processJoin();
+  </script>
+</body>
+</html>

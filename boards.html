@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Mis Pizarras - Pizarra Virtual</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .boards-container {
+      max-width: 420px;
+      margin: 50px auto;
+      background: #232733;
+      border-radius: 14px;
+      box-shadow: 0 2px 16px 0 rgba(0,0,0,0.18);
+      padding: 32px 20px 24px 20px;
+      color: #e5e7ef;
+    }
+    .boards-container h2 {
+      text-align: center;
+      margin-bottom: 1.2em;
+    }
+    .board-list {
+      list-style: none;
+      padding: 0;
+      margin-bottom: 24px;
+    }
+    .board-list li {
+      background: #292c33;
+      border-radius: 7px;
+      margin-bottom: 10px;
+      padding: 13px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 1.07rem;
+    }
+    .board-list .role {
+      font-size: 0.93em;
+      color: #bfa14a;
+      margin-left: 10px;
+    }
+    .board-list button, .board-list .invite-btn {
+      background: #bfa14a;
+      color: #232733;
+      border: none;
+      border-radius: 6px;
+      padding: 6px 13px;
+      margin-left: 8px;
+      font-size: 0.98em;
+      cursor: pointer;
+      font-weight: 500;
+      transition: background 0.18s;
+    }
+    .board-list .invite-btn {
+      background: #292c33;
+      color: #bfa14a;
+      border: 1px solid #bfa14a;
+    }
+    .board-list button.delete {
+      background: #3a1e1e;
+      color: #ffbaba;
+      border: none;
+    }
+    .create-board-form {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+    .create-board-form input {
+      flex: 1;
+      padding: 8px 10px;
+      border-radius: 7px;
+      border: 1px solid #292c33;
+      background: #181c23;
+      color: #e5e7ef;
+      font-size: 1.05rem;
+    }
+    .create-board-form button {
+      background: #bfa14a;
+      color: #232733;
+      border: none;
+      border-radius: 7px;
+      padding: 8px 17px;
+      font-size: 1.08rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.18s;
+    }
+    .logout-btn {
+      width: 100%;
+      margin-top: 18px;
+      background: #292c33;
+      color: #e5e7ef;
+      border: none;
+      border-radius: 7px;
+      padding: 9px 0;
+      font-size: 1.08rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.18s;
+    }
+    .invite-link {
+      background: #292c33;
+      color: #bfa14a;
+      border-radius: 6px;
+      padding: 7px 10px;
+      margin-top: 10px;
+      text-align: center;
+      font-size: 0.97em;
+      word-break: break-all;
+    }
+  </style>
+</head>
+<body>
+  <div class="boards-container">
+    <h2>Mis Pizarras</h2>
+    <form class="create-board-form" id="create-board-form">
+      <input type="text" id="board-name" placeholder="Nombre de la pizarra" maxlength="100" required>
+      <button type="submit">Crear</button>
+    </form>
+    <ul class="board-list" id="board-list"></ul>
+    <button class="logout-btn" onclick="logout()">Cerrar sesión</button>
+    <div id="invite-link" class="invite-link" style="display:none"></div>
+  </div>
+  <script>
+    // Cargar pizarras
+    async function loadBoards() {
+      const res = await fetch('boards.php?action=list');
+      const data = await res.json();
+      const list = document.getElementById('board-list');
+      list.innerHTML = '';
+      if (!data.boards || data.boards.length === 0) {
+        list.innerHTML = '<li>No tienes pizarras. ¡Crea una! 📝</li>';
+        return;
+      }
+      // Siempre mostrar la lista y requerir acción manual del usuario, aunque solo haya una pizarra
+      data.boards.forEach(b => {
+        const li = document.createElement('li');
+        let inviteForm = '';
+        if (b.role === 'admin') {
+          inviteForm = `
+            <form class="invite-form" onsubmit="event.preventDefault(); inviteBoardEmail(${b.id}, this)" style="display: flex; align-items: center; gap: 0;">
+  <input type="email" name="invite_email" placeholder="Email para invitar" required style="padding:5px 8px; border-radius:6px; border:1px solid #bfa14a; width:170px; margin-left:18px; margin-right:2px;">
+  <button type="submit" class="invite-btn" style="display:flex; align-items:center; justify-content:center; width:36px; height:36px; padding:0; font-size: 0.9em;">
+    <svg width="18" height="18" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" style="vertical-align:middle;"><rect x="3" y="5" width="14" height="10" rx="2" stroke="#bfa14a" stroke-width="1.3"/><path d="M3.5 5.5L10 11L16.5 5.5" stroke="#bfa14a" stroke-width="1.3"/></svg>
+  </button>
+  <span class="invite-msg" style="margin-left:8px; font-size:0.98em;"></span>
+</form>`;
+        }
+        li.innerHTML = `<span>${b.name} <span class="role">${b.role === 'admin' ? 'Coach' : 'Atleta'}</span></span>` +
+           `<div class="board-actions">` +
+          (b.role === 'admin' ? `<button class='delete' title='Eliminar' onclick='deleteBoard(${b.id})' style='display:flex; align-items:center; justify-content:center; width:36px; height:36px; padding:0;'>
+  <svg width="18" height="18" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" style="vertical-align:middle;"><path d="M6 7V15C6 15.5523 6.44772 16 7 16H13C13.5523 16 14 15.5523 14 15V7" stroke="#ffbaba" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 7H16" stroke="#ffbaba" stroke-width="1.4" stroke-linecap="round"/><path d="M9 10V13" stroke="#ffbaba" stroke-width="1.4" stroke-linecap="round"/><path d="M11 10V13" stroke="#ffbaba" stroke-width="1.4" stroke-linecap="round"/><path d="M8 7V5C8 4.44772 8.44772 4 9 4H11C11.5523 4 12 4.44772 12 5V7" stroke="#ffbaba" stroke-width="1.4" stroke-linecap="round"/></svg>
+</button>` : '') +
+          `<button title='Entrar' onclick='enterBoard(${b.id}, "${b.name.replace(/"/g, '&quot;')}", "${b.role}")' style='padding:0 7px;'>
+  <svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg" style="vertical-align:middle;">
+    <circle cx="11" cy="11" r="10" fill="#bfa14a"/>
+    <path d="M7 11H15" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M12.5 8.5L15 11L12.5 13.5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg>
+</button>` +
+          `</div>` +
+          (inviteForm ? `<div style='margin-top:7px;'>${inviteForm}</div>` : '') ;
+        list.appendChild(li);
+      });
+
+// Nueva función para enviar invitación por email
+window.inviteBoardEmail = async function(board_id, form) {
+  const email = form.invite_email.value.trim();
+  const btn = form.querySelector('button[type="submit"]');
+  const msg = form.querySelector('.invite-msg');
+  btn.disabled = true;
+  msg.textContent = 'Enviando...';
+  const res = await fetch('invite.php', {
+    method: 'POST',
+    body: new URLSearchParams({board_id, email})
+  });
+  const data = await res.json();
+  btn.disabled = false;
+  if (data.success) {
+    msg.textContent = '¡Invitación enviada!';
+    msg.style.color = '#bfa14a';
+    form.invite_email.value = '';
+  } else {
+    msg.textContent = data.error || 'Error al enviar invitación';
+    msg.style.color = '#ff6a6a';
+  }
+}
+    }
+    loadBoards();
+    // Crear nueva pizarra
+    document.getElementById('create-board-form').onsubmit = async e => {
+      e.preventDefault();
+      const name = document.getElementById('board-name').value.trim();
+      if (!name) return;
+      const res = await fetch('boards.php?action=create', {
+        method: 'POST',
+        body: new URLSearchParams({name})
+      });
+      const data = await res.json();
+      if (data.success) {
+        document.getElementById('board-name').value = '';
+        loadBoards();
+      } else {
+        alert(data.error || 'Error al crear la pizarra');
+      }
+    };
+    // Eliminar pizarra
+    async function deleteBoard(id) {
+      if (!confirm('¿Seguro que quieres eliminar esta pizarra?')) return;
+      const res = await fetch('boards.php?action=delete', {
+        method: 'POST',
+        body: new URLSearchParams({board_id: id})
+      });
+      const data = await res.json();
+      if (data.success) loadBoards();
+      else alert(data.error || 'Error al eliminar la pizarra');
+    }
+    // Entrar a la pizarra: redirige a index.html pasando los parámetros por query string
+    function enterBoard(id, name, role) {
+      const params = new URLSearchParams({
+        board_id: id,
+        board_name: name,
+        board_role: role
+      });
+      window.location.href = 'index.html?' + params.toString();
+    }
+    // Cerrar sesión
+    function logout() {
+      fetch('logout.php').then(() => window.location.href = 'auth.html');
+    }
+    // Invitar a la pizarra
+    async function inviteBoardEmail(board_id) {
+      const btn = document.querySelector('.invite-btn');
+      btn.disabled = true;
+      btn.textContent = 'Enviando...';
+      const res = await fetch('invite.php', {
+        method: 'POST',
+        body: new URLSearchParams({board_id})
+      });
+      const data = await res.json();
+      btn.disabled = false;
+      btn.textContent = '✉️';
+      if (data.success) {
+        const link = data.invite_link;
+        const inviteDiv = document.getElementById('invite-link');
+        inviteDiv.innerHTML = `Enlace de invitación:<br><a href='${link}' target='_blank'>${link}</a><br><button onclick=\"copyInvite('${link}')\">Copiar enlace</button>`;
+        inviteDiv.style.display = 'block';
+      } else {
+        alert(data.error || 'Error al generar invitación');
+      }
+    }
+    function copyInvite(link) {
+      navigator.clipboard.writeText(link);
+      alert('¡Enlace copiado! Puedes compartirlo por WhatsApp o donde quieras.');
+    }
+  </script>
+</body>
+</html>

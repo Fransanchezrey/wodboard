@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <script>
+    // Protección de acceso: redirige a auth.html si no hay sesión
+    fetch('session.php')
+      .then(r => r.json())
+      .then(data => {
+        if (!data.logged_in) {
+          window.location.href = 'auth.html';
+        }
+      });
+    // Ocultar pestaña y contenido Coach si el usuario no es admin/coach
+    document.addEventListener('DOMContentLoaded', function() {
+    const params = new URLSearchParams(window.location.search);
+    const role = params.get('board_role');
+    const tabCoach = document.getElementById('tab-coach');
+    const coachTabContent = document.getElementById('coach-tab-content');
+    const tabResults = document.getElementById('tab-results');
+    const resultsTabContent = document.getElementById('results-tab-content');
+    // Ocultar coach por defecto
+    if (coachTabContent) coachTabContent.style.display = 'none';
+    if (tabCoach) tabCoach.style.display = 'none';
+    // Mostrar solo si es admin/coach
+    if (role === 'admin' || role === 'coach') {
+        if (tabCoach) tabCoach.style.display = '';
+        if (coachTabContent) coachTabContent.style.display = 'none'; // Solo se muestra al pulsar la pestaña
+        // Asegúrate de que la pestaña resultados está seleccionada por defecto
+        if (tabResults) tabResults.setAttribute('aria-selected', 'true');
+        if (resultsTabContent) resultsTabContent.style.display = '';
+    } else {
+        // Si no es coach/admin, oculta la pestaña y el contenido Coach
+        if (tabCoach) tabCoach.remove();
+        if (coachTabContent) coachTabContent.remove();
+        if (tabResults) tabResults.setAttribute('aria-selected', 'true');
+        if (resultsTabContent) resultsTabContent.style.display = '';
+    }
+});
+  </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pizarra Virtual CrossFit</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <button onclick="window.location.href='boards.html'" class="back-to-boards main-btn">&larr; Mis Pizarras</button>
+        <h1 id="board-title"></h1>
+        <div id="calendar-bar" class="calendar-bar"></div>
+        <div class="tabs">
+            <button class="tab-btn" id="tab-results" aria-selected="true">Resultados</button>
+            <button class="tab-btn" id="tab-coach">Coach</button>
+        </div>
+        <div id="results-tab-content" class="tab-content">
+            <h2>WOD del Día</h2>
+            <div id="wod-view" class="wod-view"></div>
+            <h2>Resultados</h2>
+            <form id="result-form">
+    <input type="text" id="athlete-result" placeholder="Resultado (ej: 12+5 Rx, 15:30, 80kg, Completado)" required>
+    <button type="submit">Añadir Resultado</button>
+</form>
+            <ul id="results-list"></ul>
+        </div>
+        <div id="coach-tab-content" class="tab-content" style="display:none;">
+    <h2>Editar WOD del Día</h2>
+    <textarea id="wod-text" rows="4" placeholder="Escribe o edita el WOD aquí..."></textarea>
+    <button id="save-wod">Guardar WOD</button>
+</div>
+    </div>
+    <script>
+      // Inyectar user_id global antes de cargar script.js
+      var xhr = new XMLHttpRequest();
+      xhr.open('GET', 'user_id.php', false); // síncrono
+      xhr.send(null);
+      if (xhr.status === 200) {
+        try {
+          var u = JSON.parse(xhr.responseText);
+          window.user_id = u.user_id;
+        } catch(e) {
+          window.user_id = -1;
+        }
+      } else {
+        window.user_id = -1;
+      }
+    </script>
+    <script src="script.js"></script>
+</body>
+</html>

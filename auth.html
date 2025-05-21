@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Acceso - Pizarra Virtual</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    body { background: #181c23; }
+    .auth-container {
+      max-width: 350px;
+      margin: 60px auto;
+      background: #232733;
+      border-radius: 13px;
+      box-shadow: 0 2px 16px 0 rgba(0,0,0,0.18);
+      padding: 32px 24px 24px 24px;
+      color: #e5e7ef;
+    }
+    .auth-container h2 { text-align: center; margin-bottom: 1.2em; }
+    .auth-container label { font-weight: 500; }
+    .auth-container input {
+      width: 100%;
+      padding: 9px 10px;
+      margin-bottom: 16px;
+      border-radius: 7px;
+      border: 1px solid #292c33;
+      background: #181c23;
+      color: #e5e7ef;
+      font-size: 1.05rem;
+      transition: border 0.2s;
+    }
+    .auth-container input:focus { border: 1.5px solid #bfa14a; outline: none; }
+    .auth-container button {
+      width: 100%;
+      background: #bfa14a;
+      color: #232733;
+      border: none;
+      padding: 10px 0;
+      border-radius: 7px;
+      font-size: 1.08rem;
+      font-weight: 600;
+      cursor: pointer;
+      margin-bottom: 10px;
+      transition: background 0.18s;
+    }
+    .auth-container button.alt {
+      background: #292c33;
+      color: #e5e7ef;
+      font-weight: 500;
+      margin-bottom: 0;
+    }
+    .auth-container .error {
+      color: #ffbaba;
+      background: #3a1e1e;
+      border-radius: 6px;
+      padding: 7px 10px;
+      margin-bottom: 12px;
+      font-size: 0.97em;
+      text-align: center;
+    }
+    .auth-container .switch-link {
+      color: #bfa14a;
+      cursor: pointer;
+      display: block;
+      text-align: center;
+      margin-top: 8px;
+      text-decoration: underline;
+      font-size: 0.97em;
+    }
+  </style>
+</head>
+<body>
+  <div class="auth-container" id="auth-box">
+    <h2 id="auth-title">Acceso</h2>
+    <form id="login-form">
+      <label for="login-email">Email</label>
+      <div style="display:flex; justify-content:center; width:100%"><input type="email" id="login-email" required autocomplete="username"></div>
+      <label for="login-password">Contraseña</label>
+      <div style="display:flex; justify-content:center; width:100%"><input type="password" id="login-password" required autocomplete="current-password"></div>
+      <button type="submit">Entrar</button>
+      <button type="button" class="alt" id="show-register">Crear cuenta</button>
+      <div class="error" id="login-error" style="display:none"></div>
+      <a href="forgot_password.html" style="color:#bfa14a; text-decoration:underline; display:block; text-align:center; margin-top:10px;">¿Olvidaste tu contraseña?</a>
+    </form>
+    <form id="register-form" style="display:none">
+      <label for="register-name">Nombre</label>
+      <div style="display:flex; justify-content:center; width:100%"><input type="text" id="register-name" required autocomplete="name"></div>
+      <label for="register-email">Email</label>
+      <div style="display:flex; justify-content:center; width:100%"><input type="email" id="register-email" required autocomplete="username"></div>
+      <label for="register-password">Contraseña</label>
+      <div style="display:flex; justify-content:center; width:100%"><input type="password" id="register-password" required autocomplete="new-password"></div>
+      <label for="register-password2">Repite la contraseña</label>
+      <div style="display:flex; justify-content:center; width:100%"><input type="password" id="register-password2" required autocomplete="new-password"></div>
+      <button type="submit">Crear cuenta</button>
+      <button type="button" class="alt" id="show-login">Ya tengo cuenta</button>
+      <div class="error" id="register-error" style="display:none"></div>
+    </form>
+  </div>
+  <script>
+    // Alternar entre login y registro
+    const loginForm = document.getElementById('login-form');
+    const registerForm = document.getElementById('register-form');
+    document.getElementById('show-register').onclick = () => {
+      loginForm.style.display = 'none';
+      registerForm.style.display = 'block';
+      document.getElementById('auth-title').textContent = 'Crear cuenta';
+    };
+    document.getElementById('show-login').onclick = () => {
+      loginForm.style.display = 'block';
+      registerForm.style.display = 'none';
+      document.getElementById('auth-title').textContent = 'Acceso';
+    };
+    // Login AJAX
+    loginForm.onsubmit = async e => {
+      e.preventDefault();
+      document.getElementById('login-error').style.display = 'none';
+      const email = document.getElementById('login-email').value.trim();
+      const password = document.getElementById('login-password').value;
+      const res = await fetch('login.php', {
+        method: 'POST',
+        body: new URLSearchParams({email, password})
+      });
+      const data = await res.json();
+      if (data.success) {
+        // Redirigir según invite_code
+        const params = new URLSearchParams(window.location.search);
+        const invite_code = params.get('invite_code');
+        if (invite_code) {
+          window.location.href = 'join.html?code=' + encodeURIComponent(invite_code);
+        } else {
+          window.location.href = 'boards.html';
+        }
+      } else {
+        document.getElementById('login-error').textContent = data.error || 'Error de acceso';
+        document.getElementById('login-error').style.display = 'block';
+      }
+    };
+    // Registro AJAX
+    registerForm.onsubmit = async e => {
+      e.preventDefault();
+      document.getElementById('register-error').style.display = 'none';
+      const name = document.getElementById('register-name').value.trim();
+      const email = document.getElementById('register-email').value.trim();
+      const password = document.getElementById('register-password').value;
+      const password2 = document.getElementById('register-password2').value;
+      if (password !== password2) {
+        document.getElementById('register-error').textContent = 'Las contraseñas no coinciden.';
+        document.getElementById('register-error').style.display = 'block';
+        return;
+      }
+      const res = await fetch('register.php', {
+        method: 'POST',
+        body: new URLSearchParams({name, email, password})
+      });
+      const data = await res.json();
+      if (data.success) {
+        // Redirigir según invite_code
+        const params = new URLSearchParams(window.location.search);
+        const invite_code = params.get('invite_code');
+        if (invite_code) {
+          window.location.href = 'join.html?code=' + encodeURIComponent(invite_code);
+        } else {
+          window.location.href = 'boards.html';
+        }
+      } else {
+        document.getElementById('register-error').textContent = data.error || 'Error de registro';
+        document.getElementById('register-error').style.display = 'block';
+      }
+    };
+
+  </script>
+</body>
+</html>
