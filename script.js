@@ -23,8 +23,10 @@ if (typeof window.user_id === 'undefined') {
     window.user_id = -1;
 }
 if (!board_id) {
-    alert('Error: No se ha encontrado la pizarra activa (board_id) en la URL.');
-    throw new Error('No board_id in URL');
+    // Si no hay board_id, redirige silenciosamente a auth.html
+    window.location.href = 'auth.html';
+    // No mostrar alert ni error
+    throw new Error('No board_id in URL, redirecting to auth.html');
 }
 // Poner el nombre de la pizarra en el título
 const boardTitle = document.getElementById('board-title');
