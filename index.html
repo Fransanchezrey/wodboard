@@ -2,6 +2,13 @@
 <html lang="es">
 <head>
   <script>
+    // Redirigir a auth.html si no hay board_id en la URL
+    const params = new URLSearchParams(window.location.search);
+    if (!params.get('board_id')) {
+      window.location.href = 'auth.html';
+    }
+  </script>
+  <script>
     // Protección de acceso: redirige a auth.html si no hay sesión
     fetch('session.php')
       .then(r => r.json())
