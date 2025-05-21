@@ -4,8 +4,7 @@
 $DB_HOST = 'localhost';
 $DB_NAME = 'pizarra_virtual';
 $DB_USER = 'root'; // Cambia si tienes otro usuario
-$DB_PASS = '';Deployment start
-Repository https://github.com/Fransanchezrey/wodboard.git
+$DB_PASS = '';
 
 
 try {
