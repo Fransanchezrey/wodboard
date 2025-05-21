@@ -23,11 +23,7 @@ if (typeof window.user_id === 'undefined') {
     window.user_id = -1;
 }
 if (!board_id) {
-    // Si no hay board_id, redirige silenciosamente a auth.html
     window.location.href = 'auth.html';
-    // No mostrar alert ni error
-    return;
-
 }
 // Poner el nombre de la pizarra en el título
 const boardTitle = document.getElementById('board-title');
